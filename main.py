@@ -7,13 +7,13 @@ import json
 import numpy as np
 import plotly.graph_objects as go
 import qrcode as qr
-# Incorporate data
-with open(r"C:\Users\Shaun\Desktop\json-doc\JsonExport-6jjN.json", encoding="utf-8-sig") as jsonfile:
+# Incorporate data from the proposed json export
+with open("JsonExport.json", encoding="utf-8-sig") as jsonfile:
     data = json.load(jsonfile)
-
 isSensor = False
 
 
+# Get all the relevant data as dataframes
 def get_relevant_tables(element_type,secondary_name):
     elements_df = pd.DataFrame.from_dict(data[element_type+'s'])
     elements_df.replace("", float("NaN"), inplace=True)
@@ -28,6 +28,7 @@ def get_relevant_tables(element_type,secondary_name):
     return elements_df, element_types, element_types_with_id, elements_df_agg, element_df_by_type
 
 
+# Split the dataframe horizontally and vertically
 def split_dataframes(df, no_columns, no_rows):
     vertical_split_dfs = np.split(df, np.arange(no_columns, len(df.columns), no_columns), axis=1)
     list_of_dfs = []
@@ -36,6 +37,8 @@ def split_dataframes(df, no_columns, no_rows):
             list_of_dfs.append(df.iloc[i:i+no_rows-1,:] )
     return list_of_dfs
 
+
+# Given a dataframe of connections , generate the heatmap
 def get_heatmap(df):
     heatmap_x = list(df.iloc[:0])
     heatmap_y = df.index
@@ -53,11 +56,15 @@ actuators_df, actuator_types, actuator_types_with_id, actuators_df_agg, actuator
 sensors_df, sensor_types, sensor_types_with_id, sensors_df_agg, sensors_df_by_type = get_relevant_tables("Sensor", "Sensor")
 sensors_df_with_rel = sensors_df.copy()
 sensors_df.drop('RelatedElements', axis=1, inplace=True)
-sensors_df_with_rel["Actuators"] = sensors_df_with_rel["RelatedElements"].apply(lambda x:[d['Name'] for d in x])
+# Replace the Actuator dictionary with just its name
+sensors_df_with_rel["Actuators"] = sensors_df_with_rel["RelatedElements"].apply(lambda x: [d['Name'] for d in x])
+# Create separate row for each connected actuator
 exploded_sensor_actuator_df = sensors_df_with_rel.explode('Actuators').reset_index(drop=True)[["Name", "Actuators"]]
-exploded_sensor_actuator_df.rename(columns = {'Name':'Sensors'}, inplace = True)
+exploded_sensor_actuator_df.rename(columns={'Name': 'Sensors'}, inplace=True)
+# The existing rows are connected
 exploded_sensor_actuator_df["Connected"] = 1
-pivoted_connection_df = pd.pivot_table(exploded_sensor_actuator_df, values='Connected', index=['Actuators'] , columns=['Sensors'], aggfunc=np.mean)
+# Pivot the dataframe with Actuator Names
+pivoted_connection_df = pd.pivot_table(exploded_sensor_actuator_df, values='Connected', index=['Actuators'], columns=['Sensors'], aggfunc=np.mean)
 heatmap_dfs = split_dataframes(pivoted_connection_df, 10, 10)
 mod_df = actuators_df.copy()
 frames = [
@@ -94,15 +101,15 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 tab1_content = dbc.CardBody([
     dbc.Row([
             dbc.Col([
-            html.Div('Select sensor or actuator :', className="text-secondary text-left fs-5")
+                html.Div('Select sensor or actuator :', className="text-secondary text-left fs-5")
+                ]),
+            dbc.Col([
+                dbc.RadioItems(options=[{"label": x, "value": x} for x in ['Sensors', 'Actuators']],
+                               value='Sensors',
+                               inline=True,
+                               id='radio-buttons-final')
+                 ]),
             ]),
-    dbc.Col([
-        dbc.RadioItems(options=[{"label": x, "value": x} for x in ['Sensors', 'Actuators']],
-                       value='Sensors',
-                       inline=True,
-                       id='radio-buttons-final')
-         ]),
-        ]),
     dbc.Row([
         html.Hr()
     ]),
@@ -111,7 +118,7 @@ tab1_content = dbc.CardBody([
         dbc.Col([
 
             html.Div('Select element type :', className="text-secondary text-left fs-5")
-            ],width=4),
+            ], width=4),
         dbc.Col([
             dcc.Dropdown(options=[x for x in actuator_types], value=actuator_types[0], id='dropdown'),
             ],width=4),
@@ -224,6 +231,7 @@ def get_qr_code(active_cell):
     img = qr.make(export_id)
     fig = px.imshow(img, title="Qr Code for element " + name)
     return fig
+
 
 # Run the app
 if __name__ == '__main__':
