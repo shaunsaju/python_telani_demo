@@ -3,12 +3,14 @@ A demonstration of different applications of a proposed telani JSON-Export forma
 
 # prerequisites
 Python environment
+Pip
 
 # Steps to get the python scripts up and running
 1) Clone the repo :  git clone "https://github.com/telani-app/python_telani_demo.git"
-2) In the terminal cd to repo : cd path\to\repo
-3) Run the command : python main.py
-4) In a browser go to the port where the dash application is running.
+2) To install all the depensencies run the command : pip install -r .\requirements.txt
+3) In the terminal cd to repo : cd path\to\repo
+4) Run the command : python main.py
+5) In a browser go to the port where the dash application is running.
 
 # How to use the dashboard
 The dashboard has three tabs:
