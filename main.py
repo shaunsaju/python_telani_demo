@@ -217,10 +217,12 @@ def update_table(col_chosen):
 def get_qr_code(active_cell):
     if active_cell is not None:
         export_id = mod_df.iloc[active_cell["row"]]["ExportId"]
+        name = mod_df.iloc[active_cell["row"]]["Name"]
     else:
         export_id = mod_df.iloc[0]["ExportId"]
+        name = mod_df.iloc[0]["Name"]
     img = qr.make(export_id)
-    fig = px.imshow(img)
+    fig = px.imshow(img, title="Qr Code for element " + name)
     return fig
 
 # Run the app
