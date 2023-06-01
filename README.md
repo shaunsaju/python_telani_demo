@@ -7,7 +7,7 @@ Pip
 
 # Steps to get the python scripts up and running
 1) Clone the repo :  git clone "https://github.com/telani-app/python_telani_demo.git"
-2) To install all the depensencies run the command : pip install -r .\requirements.txt
+2) To install all the dependencies run the command : pip install -r .\requirements.txt
 3) In the terminal cd to repo : cd path\to\repo
 4) Run the command : python main.py
 5) In a browser go to the port where the dash application is running.
