@@ -7,9 +7,15 @@ import json
 import numpy as np
 import plotly.graph_objects as go
 import qrcode as qr
+from jsonschema import validate
 # Incorporate data from the proposed json export
 with open("JsonExport.json", encoding="utf-8-sig") as jsonfile:
     data = json.load(jsonfile)
+# Load the json schema
+with open("json-schema.json", encoding="utf-8-sig") as jsonfile:
+    schema = json.load(jsonfile)
+# Validate the data against schema
+validate(instance=data, schema=schema)
 isSensor = False
 
 

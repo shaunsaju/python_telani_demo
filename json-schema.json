@@ -1,0 +1,282 @@
+{
+  "type": "object",
+  "required": [ "Zones", "Systems", "Actuator_Types", "Sensor_Types", "Actuators", "Sensors", "Version"],
+  "properties": {
+    "Zones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["Name", "Farbe", "Geschoss", "Beschreibung"],
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "Farbe": {
+            "type": "string"
+          },
+          "Geschoss": {
+            "type": "string"
+          },
+          "Beschreibung": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Systems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["SystemId", "EditedTagNameIsValid", "IsSubSystem", "NameOfSuperSystem", "BeautifulName"],
+        "properties": {
+          "SystemId": {
+            "type": "number"
+          },
+          "Category": {
+            "type": "object",
+            "required": ["Name", "SortIndex"],
+            "properties": {
+              "ActorCategoryId": {
+                "type": "number"
+              },
+              "Name": {
+                "type": "string"
+              },
+              "SortIndex": {
+                "type": "number"
+              }
+            }
+          },
+          "EditedName": {
+            "type": "string"
+          },
+          "EditedTagNameIsValid": {
+            "type": "boolean"
+          },
+          "OrderableName": {
+            "type": "string"
+          },
+          "IsSubSystem": {
+            "type": "boolean"
+          },
+          "NameWithoutFirstSuperSystem": {
+            "type": "string"
+          },
+          "NameOfSuperSystem": {
+            "type": "string"
+          },
+          "BeautifulName": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Actuator_Types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["AddedToProject", "Hidden", "Global", "Identifier", "DefaultConnectedByWiringType"],
+        "properties": {
+          "Category": {
+            "type": "string"
+          },
+          "AddedToProject": {
+            "type": "boolean"
+          },
+          "Hidden": {
+            "type": "boolean"
+          },
+          "UniversalIcon": {},
+          "IconPath": {
+            "type": "string"
+          },
+          "Global": {
+            "type": "boolean"
+          },
+          "DefaultAlarmState": {
+            "type": "string"
+          },
+          "Identifier": {
+            "type": "string"
+          },
+          "InfoText": {
+            "type": "string"
+          },
+          "Abbreviation": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "DefaultConnectedByWiringType": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "Sensor_Types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["DetectorTyp","IsWaterRelated","AddedToProject", "Hidden", "Global", "Identifier", "DefaultConnectedByWiringType"],
+        "properties": {
+          "DetectorTyp": {
+            "type": "number"
+          },
+          "IsWaterRelated": {
+            "type": "boolean"
+          },
+          "AddedToProject": {
+            "type": "boolean"
+          },
+          "Hidden": {
+            "type": "boolean"
+          },
+          "UniversalIcon": {},
+          "IconPath": {
+            "type": "string"
+          },
+          "Global": {
+            "type": "boolean"
+          },
+          "DefaultAlarmState": {
+            "type": "string"
+          },
+          "Identifier": {
+            "type": "string"
+          },
+          "InfoText": {
+            "type": "string"
+          },
+          "Abbreviation": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "DefaultConnectedByWiringType": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "Actuators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["Name", "ActortypeIdentifier", "Geschoss", "Anlage", "Auslösebereich", "Typbezeichnung", "Alarmzustand", "Übertragungsweg", "Location", "SpecialVerificationProperties", "Aufschaltung", "Aufschaltungsdetails"],
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "ActortypeIdentifier": {
+            "type": "string"
+          },
+          "Geschoss": {
+            "type": "string"
+          },
+          "Anlage": {
+            "type": "string"
+          },
+          "Auslösebereich": {
+            "type": "string"
+          },
+          "Typbezeichnung": {
+            "type": "string"
+          },
+          "Alarmzustand": {
+            "type": "string"
+          },
+          "Übertragungsweg": {
+            "type": "string"
+          },
+          "Location": {
+            "type": "string"
+          },
+          "SpecialVerificationProperties": {
+            "type": "string"
+          },
+          "Aufschaltung": {
+            "type": "string"
+          },
+          "Aufschaltungsdetails": {
+            "type": "string"
+          },
+          "Children": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "Sensors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["Name", "SensortypeIdentifier", "Geschoss", "Anlage", "Auslösebereich", "Typbezeichnung", "Alarmzustand", "Übertragungsweg", "Location", "SpecialVerificationProperties", "Aufschaltung", "Aufschaltungsdetails", "Melderart"],
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "SensortypeIdentifier": {
+            "type": "string"
+          },
+          "Geschoss": {
+            "type": "string"
+          },
+          "Anlage": {
+            "type": "string"
+          },
+          "Auslösebereich": {
+            "type": "string"
+          },
+          "Typbezeichnung": {
+            "type": "string"
+          },
+          "Alarmzustand": {
+            "type": "string"
+          },
+          "Übertragungsweg": {
+            "type": "string"
+          },
+          "Location": {
+            "type": "string"
+          },
+          "SpecialVerificationProperties": {
+            "type": "string"
+          },
+          "Melderart": {
+            "type": "string"
+          },
+          "Aufschaltung": {
+            "type": "string"
+          },
+          "Aufschaltungsdetails": {
+            "type": "string"
+          },
+          "RelatedElements": {
+            "type": "array",
+            "items": {
+              "type": "object"
+              }
+            }
+          },
+          "Children": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "Version": {
+      "type": "string"
+    }
+  
+  }
