@@ -2,7 +2,7 @@
 A demonstration of different applications of a proposed telani JSON-Export format.
 
 # prerequisites
-Python environment
+Python environment, 
 Pip
 
 # Steps to get the python scripts up and running
