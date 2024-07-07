@@ -1,17 +1,25 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://telani.net/json-schema/telani-project-1.schema.json",
+  "title": "telani Project Export",
   "type": "object",
-  "required": [ "Zones", "Systems", "Actuator_Types", "Sensor_Types", "Actuators", "Sensors", "Version"],
+  "additionalProperties": false,
+  "required": [ "Zones", "Systems", "Actuator_Types", "Sensor_Types", "Actuators", "Sensors", "Version" ],
   "properties": {
     "Zones": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["Name", "Farbe", "Geschoss", "Beschreibung"],
+        "required": [ "Name", "Farbe", "ColorOpaque", "Geschoss", "Beschreibung"],
+        "additionalProperties": false,
         "properties": {
           "Name": {
             "type": "string"
           },
           "Farbe": {
+            "type": "string"
+          },
+          "ColorOpaque": {
             "type": "string"
           },
           "Geschoss": {
@@ -27,14 +35,15 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["SystemId", "EditedTagNameIsValid", "IsSubSystem", "NameOfSuperSystem", "BeautifulName"],
+        "required": [ "SystemId", "IsSubSystem", "NameOfSuperSystem", "BeautifulName" ],
+        "additionalProperties": false,
         "properties": {
           "SystemId": {
             "type": "number"
           },
           "Category": {
             "type": "object",
-            "required": ["Name", "SortIndex"],
+            "required": [ "Name", "SortIndex" ],
             "properties": {
               "ActorCategoryId": {
                 "type": "number"
@@ -46,15 +55,6 @@
                 "type": "number"
               }
             }
-          },
-          "EditedName": {
-            "type": "string"
-          },
-          "EditedTagNameIsValid": {
-            "type": "boolean"
-          },
-          "OrderableName": {
-            "type": "string"
           },
           "IsSubSystem": {
             "type": "boolean"
@@ -78,7 +78,8 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["AddedToProject", "Hidden", "Global", "Identifier", "DefaultConnectedByWiringType"],
+        "required": [ "AddedToProject", "Hidden", "Global", "Identifier", "DefaultConnectedByWiringType" ],
+        "additionalProperties": false,
         "properties": {
           "Category": {
             "type": "string"
@@ -89,7 +90,6 @@
           "Hidden": {
             "type": "boolean"
           },
-          "UniversalIcon": {},
           "IconPath": {
             "type": "string"
           },
@@ -121,7 +121,8 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["DetectorTyp","IsWaterRelated","AddedToProject", "Hidden", "Global", "Identifier", "DefaultConnectedByWiringType"],
+        "required": [ "DetectorTyp", "IsWaterRelated", "AddedToProject", "Hidden", "Global", "Identifier", "DefaultConnectedByWiringType" ],
+        "additionalProperties": false,
         "properties": {
           "DetectorTyp": {
             "type": "number"
@@ -167,12 +168,13 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["Name", "ActortypeIdentifier", "Geschoss", "Anlage", "Auslösebereich", "Typbezeichnung", "Alarmzustand", "Übertragungsweg", "Location", "SpecialVerificationProperties", "Aufschaltung", "Aufschaltungsdetails"],
+        "required": [ "Name", "TypeIdentifier", "Geschoss", "Anlage", "Auslösebereich", "Typbezeichnung", "Alarmzustand", "Übertragungsweg", "Location", "SpecialVerificationProperties", "Aufschaltung", "Aufschaltungsdetails"],
+        "additionalProperties": false,
         "properties": {
           "Name": {
             "type": "string"
           },
-          "ActortypeIdentifier": {
+          "TypeIdentifier": {
             "type": "string"
           },
           "Geschoss": {
@@ -205,10 +207,18 @@
           "Aufschaltungsdetails": {
             "type": "string"
           },
+          "ExportId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "TelaniSystemId": {
+            "type": [ "number", "null" ]
+          },
           "Children": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "string",
+              "format": "uuid"
             }
           }
         }
@@ -217,66 +227,80 @@
     "Sensors": {
       "type": "array",
       "items": {
-        "type": "object",
-        "required": ["Name", "SensortypeIdentifier", "Geschoss", "Anlage", "Auslösebereich", "Typbezeichnung", "Alarmzustand", "Übertragungsweg", "Location", "SpecialVerificationProperties", "Aufschaltung", "Aufschaltungsdetails", "Melderart"],
-        "properties": {
-          "Name": {
-            "type": "string"
-          },
-          "SensortypeIdentifier": {
-            "type": "string"
-          },
-          "Geschoss": {
-            "type": "string"
-          },
-          "Anlage": {
-            "type": "string"
-          },
-          "Auslösebereich": {
-            "type": "string"
-          },
-          "Typbezeichnung": {
-            "type": "string"
-          },
-          "Alarmzustand": {
-            "type": "string"
-          },
-          "Übertragungsweg": {
-            "type": "string"
-          },
-          "Location": {
-            "type": "string"
-          },
-          "SpecialVerificationProperties": {
-            "type": "string"
-          },
-          "Melderart": {
-            "type": "string"
-          },
-          "Aufschaltung": {
-            "type": "string"
-          },
-          "Aufschaltungsdetails": {
-            "type": "string"
-          },
-          "RelatedElements": {
-            "type": "array",
-            "items": {
-              "type": "object"
-              }
-            }
-          },
-          "Children": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          }
-        }
+        "$ref": "#/$defs/sensor"
       }
     },
     "Version": {
       "type": "string"
     }
-  
+  },
+  "$defs": {
+    "sensor": {
+      "type": "object",
+      "required": [ "Name", "TypeIdentifier", "Geschoss", "Anlage", "Auslösebereich", "Typbezeichnung", "Alarmzustand", "Übertragungsweg", "Location", "SpecialVerificationProperties", "Aufschaltung", "Aufschaltungsdetails", "Melderart" ],
+      "additionalProperties": false,
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "TypeIdentifier": {
+          "type": "string"
+        },
+        "Geschoss": {
+          "type": "string"
+        },
+        "Anlage": {
+          "type": "string"
+        },
+        "Auslösebereich": {
+          "type": "string"
+        },
+        "Typbezeichnung": {
+          "type": "string"
+        },
+        "Alarmzustand": {
+          "type": "string"
+        },
+        "Übertragungsweg": {
+          "type": "string"
+        },
+        "Location": {
+          "type": "string"
+        },
+        "SpecialVerificationProperties": {
+          "type": "string"
+        },
+        "Aufschaltung": {
+          "type": "string"
+        },
+        "Aufschaltungsdetails": {
+          "type": "string"
+        },
+        "Melderart": {
+          "type": "string"
+        },
+        "ExportId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "TelaniSystemId": {
+          "type": [ "number", "null" ]
+        },
+        "Children": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "RelatedElements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    }
   }
+}

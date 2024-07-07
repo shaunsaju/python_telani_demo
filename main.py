@@ -20,18 +20,19 @@ isSensor = False
 
 
 # Get all the relevant data as dataframes
-def get_relevant_tables(element_type,secondary_name):
+def get_relevant_tables(element_type):
     elements_df = pd.DataFrame.from_dict(data[element_type+'s'])
     elements_df.replace("", float("NaN"), inplace=True)
     elements_df.dropna(how='all', axis=1, inplace=True)
     element_types_df = pd.DataFrame.from_dict(data[element_type+"_Types"])
     element_types = element_types_df["Name"]
     element_types_with_id = element_types_df[["Name", "Identifier"]]
-    elements_df_agg = elements_df.groupby(secondary_name+'typeIdentifier')[secondary_name + "typeIdentifier"].count().\
+    elements_df_agg = elements_df.groupby('TypeIdentifier')['TypeIdentifier'].count().\
         reset_index(name="Count")
-    element_df_by_type = elements_df_agg.merge(element_types_with_id, left_on=secondary_name + 'typeIdentifier',
+    element_df_by_type = elements_df_agg.merge(element_types_with_id, left_on='TypeIdentifier',
                                                right_on='Identifier')[['Name', 'Count']]
-    return elements_df, element_types, element_types_with_id, elements_df_agg, element_df_by_type
+    name_exportid_map = dict(zip(elements_df['ExportId'], elements_df['Name']))
+    return elements_df, element_types, element_types_with_id, elements_df_agg, element_df_by_type, name_exportid_map
 
 
 # Split the dataframe horizontally and vertically
@@ -53,24 +54,27 @@ def get_heatmap(df):
     for yi, yy in enumerate(heatmap_y):
         hovertext.append(list())
         for xi, xx in enumerate(heatmap_x):
-            hovertext[-1].append('Sensor: {}<br />Actuator: {}<br />Connection: {}'.format(xx, yy, "Connected" if heatmap_z.iloc[yi][xx]==1 else "Not Connected"))
+            hovertext[-1].append('Sensor: {}<br />Actuator: {}<br />Connection: {}'.format(xx, yy, "Connected" if heatmap_z.iloc[yi][xi]==1 else "Not Connected"))
 
     return go.Heatmap(z=heatmap_z, x=heatmap_x, y=heatmap_y, xgap=5, ygap=5,  colorscale='Viridis',  showscale=False, hoverinfo='text', hovertext=hovertext )
 
 
-actuators_df, actuator_types, actuator_types_with_id, actuators_df_agg, actuators_df_by_type = get_relevant_tables("Actuator", "Actor")
-sensors_df, sensor_types, sensor_types_with_id, sensors_df_agg, sensors_df_by_type = get_relevant_tables("Sensor", "Sensor")
+actuators_df, actuator_types, actuator_types_with_id, actuators_df_agg, actuators_df_by_type, actuator_name_map = get_relevant_tables("Actuator")
+sensors_df, sensor_types, sensor_types_with_id, sensors_df_agg, sensors_df_by_type, sensor_name_map = get_relevant_tables("Sensor")
 sensors_df_with_rel = sensors_df.copy()
 sensors_df.drop('RelatedElements', axis=1, inplace=True)
-# Replace the Actuator dictionary with just its name
-sensors_df_with_rel["Actuators"] = sensors_df_with_rel["RelatedElements"].apply(lambda x: [d['Name'] for d in x])
 # Create separate row for each connected actuator
-exploded_sensor_actuator_df = sensors_df_with_rel.explode('Actuators').reset_index(drop=True)[["Name", "Actuators"]]
-exploded_sensor_actuator_df.rename(columns={'Name': 'Sensors'}, inplace=True)
+exploded_sensor_actuator_df = sensors_df_with_rel.explode('RelatedElements').reset_index(drop=True)[["ExportId", "RelatedElements"]]
+exploded_sensor_actuator_df.rename(columns={'ExportId': 'Sensors', 'RelatedElements': 'Actuators'}, inplace=True)
 # The existing rows are connected
 exploded_sensor_actuator_df["Connected"] = 1
-# Pivot the dataframe with Actuator Names
+# Pivot the dataframe with Actuator Ids
 pivoted_connection_df = pd.pivot_table(exploded_sensor_actuator_df, values='Connected', index=['Actuators'], columns=['Sensors'], aggfunc=np.mean)
+# Replace actuator export IDs in the index with names
+pivoted_connection_df.index = pivoted_connection_df.index.to_series().replace(actuator_name_map)
+# Replace sensor export IDs in the columns with names
+pivoted_connection_df.columns = pivoted_connection_df.columns.to_series().replace(sensor_name_map)
+pivoted_connection_df = pivoted_connection_df.fillna(0)
 heatmap_dfs = split_dataframes(pivoted_connection_df, 10, 10)
 mod_df = actuators_df.copy()
 frames = [
@@ -213,13 +217,13 @@ def update_table(col_chosen):
     global mod_df
     if isSensor :
         identifier = sensor_types_with_id[(sensor_types_with_id["Name"] == col_chosen)]["Identifier"]
-        mod_df = sensors_df[(sensors_df["SensortypeIdentifier"] == identifier.values[0])]
-        mod_df = mod_df.drop('SensortypeIdentifier', axis=1)
+        mod_df = sensors_df[(sensors_df["TypeIdentifier"] == identifier.values[0])]
+        mod_df = mod_df.drop('TypeIdentifier', axis=1)
         return mod_df.to_dict('records')
     else:
         identifier = actuator_types_with_id[(actuator_types_with_id["Name"] == col_chosen)]["Identifier"]
-        mod_df = actuators_df[(actuators_df["ActortypeIdentifier"] == identifier.values[0])]
-        mod_df = mod_df.drop('ActortypeIdentifier', axis=1)
+        mod_df = actuators_df[(actuators_df["TypeIdentifier"] == identifier.values[0])]
+        mod_df = mod_df.drop('TypeIdentifier', axis=1)
         return mod_df.to_dict('records')
 
 
