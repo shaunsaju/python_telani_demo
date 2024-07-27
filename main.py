@@ -24,6 +24,7 @@ def get_relevant_tables(element_type):
     elements_df = pd.DataFrame.from_dict(data[element_type+'s'])
     elements_df.replace("", float("NaN"), inplace=True)
     elements_df.dropna(how='all', axis=1, inplace=True)
+    elements_df.drop("Children", axis=1, inplace=True)
     element_types_df = pd.DataFrame.from_dict(data[element_type+"_Types"])
     element_types = element_types_df["Name"]
     element_types_with_id = element_types_df[["Name", "Identifier"]]
@@ -215,16 +216,16 @@ def update_type(plan_element):
 )
 def update_table(col_chosen):
     global mod_df
-    if isSensor :
+    if isSensor:
         identifier = sensor_types_with_id[(sensor_types_with_id["Name"] == col_chosen)]["Identifier"]
         mod_df = sensors_df[(sensors_df["TypeIdentifier"] == identifier.values[0])]
         mod_df = mod_df.drop('TypeIdentifier', axis=1)
-        return mod_df.to_dict('records')
+        return mod_df.drop('ExportId', axis=1).to_dict('records')
     else:
         identifier = actuator_types_with_id[(actuator_types_with_id["Name"] == col_chosen)]["Identifier"]
         mod_df = actuators_df[(actuators_df["TypeIdentifier"] == identifier.values[0])]
         mod_df = mod_df.drop('TypeIdentifier', axis=1)
-        return mod_df.to_dict('records')
+        return mod_df.drop('ExportId', axis=1).to_dict('records')
 
 
 @callback(
